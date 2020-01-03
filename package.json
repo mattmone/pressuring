@@ -1,0 +1,23 @@
+{
+  "name": "pressuring",
+  "version": "1.0.0",
+  "description": "a pressure sensor game of some sort",
+  "main": "index.js",
+  "scripts": {
+    "serve": "http-server ./src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mattmone/pressuring.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mattmone/pressuring/issues"
+  },
+  "homepage": "https://github.com/mattmone/pressuring#readme",
+  "dependencies": {
+    "@vernier/godirect": "^1.5.4",
+    "http-server": "^0.12.0"
+  }
+}
