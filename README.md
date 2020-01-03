@@ -1,7 +1,7 @@
 # Pressuring
 a pressure sensor game of some sort
 
-#Getting Started
+# Getting Started
 
 have a Vernier Go Direct&reg; Hand Dynamometer
 
