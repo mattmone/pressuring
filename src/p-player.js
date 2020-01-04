@@ -21,6 +21,7 @@ export class PPlayer extends LitElement {
     }
     try {
       const device = await this.goDirect.selectDevice();
+      device.start(8);
       this.player = device.sensors.filter(s => s.name === "Force")[0];
       window.addEventListener("beforeunload", event => {
         event.preventDefault();
@@ -36,7 +37,8 @@ export class PPlayer extends LitElement {
       if(this.calibrated) return;
       this.min = this.force < this.min ? this.force : this.min;
       this.max = this.force > this.max ? this.force : this.max;
-      this.size = this.max + Math.abs(this.min);
+      this.size = (this.max + Math.abs(this.min));
+      this.drawSize = this.size*3;
       setTimeout(_ => { 
         this.calibrated=true;
         requestAnimationFrame(_ => {
@@ -48,28 +50,16 @@ export class PPlayer extends LitElement {
     });
   }
   draw() {
-    this.stepping = this.value !== this.force;
-    if(this.stepping) {
-      if(!this.step) this.step = (this.force - this.value) / (500/16);
-      this.value += this.step;
-      let compare = this.value <= this.force;
-      if(this.step > 0) compare = this.value >= this.force;
-      if(compare) {
-        this.force = this.value;
-        this.stepping = false;
-        this.step = 0;
-      }
-    }
     this.context.clearRect(0,0,this.canvas.width, this.canvas.height);
     this.context.fillStyle = '#000';
-    this.context.fillRect(this.size/10,this.canvas.height - this.size/20 - this.value,this.size/20,this.size/20);
+    this.context.fillRect(this.drawSize/10,this.canvas.height - this.drawSize/20 - this.force*3,this.drawSize/20,this.drawSize/20);
 
     requestAnimationFrame(_ => this.draw());
   }
   render() {
     if(!this.player) return html`<button id='play' @click=${this.play}>PLAY</button>`;
     if(!this.calibrated) return html`<div id='calibration'>Give the sensor a good one handed squeeze.</div>`;
-    return html`<canvas height=${this.size} width=${this.size} id='game'></canvas>`;
+    return html`<canvas height=${this.drawSize} width=${this.drawSize} id='game'></canvas>`;
   }
   static styles = css`
     * { box-sizing: border-box }
