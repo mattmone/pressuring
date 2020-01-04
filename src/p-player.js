@@ -12,6 +12,7 @@ export class PPlayer extends LitElement {
     this.min = 0;
     this.max = 0;
     this.calibrated = false;
+    this.value = 0;
   }
   async play(e) {
     if(!this.goDirect) {
@@ -21,6 +22,10 @@ export class PPlayer extends LitElement {
     try {
       const device = await this.goDirect.selectDevice();
       this.player = device.sensors.filter(s => s.name === "Force")[0];
+      window.addEventListener("beforeunload", event => {
+        event.preventDefault();
+        device.close();
+      });
     } catch(err) {
       alert(err.message);
     }
@@ -43,9 +48,21 @@ export class PPlayer extends LitElement {
     });
   }
   draw() {
+    this.stepping = this.value !== this.force;
+    if(this.stepping) {
+      if(!this.step) this.step = (this.force - this.value) / (500/16);
+      this.value += this.step;
+      let compare = this.value <= this.force;
+      if(this.step > 0) compare = this.value >= this.force;
+      if(compare) {
+        this.force = this.value;
+        this.stepping = false;
+        this.step = 0;
+      }
+    }
     this.context.clearRect(0,0,this.canvas.width, this.canvas.height);
     this.context.fillStyle = '#000';
-    this.context.fillRect(this.size/10,this.canvas.height - this.size/20 - this.force,this.size/20,this.size/20);
+    this.context.fillRect(this.size/10,this.canvas.height - this.size/20 - this.value,this.size/20,this.size/20);
 
     requestAnimationFrame(_ => this.draw());
   }
@@ -60,6 +77,8 @@ export class PPlayer extends LitElement {
       display:flex;
       align-items:center;
       justify-content:center;
+      width: 90vmin;
+      height: 90vmin;
     }
     #play {
       background-color:red;
